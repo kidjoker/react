@@ -1,70 +1,47 @@
-import ReactDOM from 'react-dom';
-import React from 'react';
-import BottomBar from './component/BottomBar';
-import Profile from './component/Profile';
-import MainContent from './component/MainContent';
-import Navbar from './component/Navbar';
-import Hero from './component/Hero';
-import Card from "./component/Card";
-import heroData from './component/HeroData';
-import TravelData from './component/TravelData';
-import TravelCard from './component/TravelCard';
+import React from "react";
+import ReactDOM from 'react-dom'
+import WindowTracker from "./component/WindowTracker";
 
-import './css/main.css'
-impo	
-const Page1 = () => {
+const Counter = () => {
+    const [starWarsData, setStarWarsData] = React.useState({})
+    const [count, setCount] = React.useState(1)
+    const [allMemes, setAllMemes] = React.useState([])
+
+    React.useEffect(() => {
+        fetch(`https://swapi.dev/api/people/${count}`)
+            .then(res => res.json())
+            .then(data => setStarWarsData(data))
+    },[count])
+
+    React.useEffect(() => {
+        fetch('https://api.imgflip.com/get_memes')
+            .then(res => res.json())
+            .then((data) => {
+                setAllMemes(data.data.memes)
+            })  
+    },[])
+
     return (
         <div>
-            <Header />
-            <Body />
+            <pre>{JSON.stringify(starWarsData, null, 2)}</pre>
+            <h2>The count is {count}</h2>
+            <button onClick={() => {setCount(prev => prev+1)}}>Add</button>
+            <img src={allMemes[count]?.url}/>
         </div>
     )
 }
 
-const Page2 = () => {
+const Windows = () => {
+    const [show, setShow] = React.useState(true)
+    
     return (
-        <div>
-            <Profile />
-            <MainContent />
-            <BottomBar />
+        <div className="container">
+            <button onClick={() => setShow((prev) => !prev)}>
+                Toggle WindowTracker
+            </button>
+            {show && <WindowTracker/>}
         </div>
     )
 }
 
-const Airbnb = () => {
-    const heroElements = heroData.map(hero => {
-        return <Card 
-            key = {hero.id}
-            hero = {hero}>
-        </Card>
-    })
-    return (
-        <div>
-            <Navbar></Navbar>
-            <Hero></Hero>
-            <div className='cards'>
-                {heroElements}
-            </div>
-        </div>
-    )
-}
-
-const Travel = () => {
-    const travelElements = TravelData.map(travel => {
-        return <TravelCard
-            key = {travel.id}
-            travel = {travel}>
-        </TravelCard>
-    })
-
-    return (
-        <div>
-            <Navbar></Navbar>
-            <div className='travelCards'>
-                {travelElements}
-            </div>
-        </div>
-    )
-}
-
-ReactDOM.render(<Travel />, document.getElementById('app'))
+ReactDOM.render(<Windows />, document.getElementById('app'))

@@ -1,12 +1,15 @@
 import React from "react";
-import image from './img/react.png'
+import react from '../img/react.png'
 
-export default function Header() {
+export default function Header(props) {
     return (
-        <nav className="nav">
-            <img src={image}></img>
-            <h3>ReactFacts</h3>
-            <h4>React Courses - Project 1</h4>
-        </nav>
+        <header className="header">
+            <img className='header-image' src={react}></img>
+            <h2 className='header-title'>ReactFacts</h2>
+            <p>Light</p>
+            <input type="checkbox" id="switch" className="checkbox" onClick={props.toggleDarkMode}/>
+            <label htmlFor="switch" className="toggle"/>
+            <p>Dark</p>
+        </header>
     )
 };

@@ -5,7 +5,7 @@ const HtmlWebPackPlugin = require('html-webpack-plugin');
 module.exports = {
     mode: 'development',
     entry: {
-        app: './src/app.js'
+        app: './src/Notes.js'
     },
     output: {
         path: path.resolve(__dirname, 'dist'),
