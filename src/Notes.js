@@ -8,13 +8,19 @@ import { nanoid } from "nanoid"
 import "./css/note.css"
 
 export default function App() {
-    const [notes, setNotes] = React.useState([])
+    const [notes, setNotes] = React.useState(() => JSON.parse(localStorage.getItem("notes")) || [])
+
     const [currentNoteId, setCurrentNoteId] = React.useState((notes[0] && notes[0].id) || "")
+
+    React.useEffect(() => {
+        localStorage.setItem("notes", JSON.stringify(notes))
+    },[notes])
 
     const createNewNote = () => {
         const newNote = {
             id: nanoid(),
-            body: "# Type your markdown note's title here"
+            body: "# Type your markdown note's title here",
+            updateTime: new Date()
         }
         setNotes(prevNotes => [newNote, ...prevNotes])
         setCurrentNoteId(newNote.id)
@@ -22,18 +28,23 @@ export default function App() {
 
     const updateNote = (text) => {
         setNotes(oldNotes => oldNotes.map(oldNote => {
-            return oldNote.id === currentNoteId 
-                ? {...oldNote, body: text}
-                : oldNote
-        }))
+                return oldNote.id === currentNoteId 
+                    ? {...oldNote, body: text, updateTime: new Date()}
+                    : oldNote
+            })
+        )
     }
 
     const findCurrentNote = () => {
         return notes.find(note => note.id === currentNoteId) || notes[0]
     }
 
+    const deleteNote = (noteId) => {
+        setNotes(oldNotes => oldNotes.filter(oldNote => oldNote.id !== noteId))
+    }
+
     return (
-        <div>
+        <main>
             {
                 notes.length > 0 ?
                 <Split
@@ -46,6 +57,7 @@ export default function App() {
                         currentNote={findCurrentNote()}
                         setCurrentNoteId={setCurrentNoteId}
                         newNote={createNewNote}
+                        deleteNote={deleteNote}
                     />
                     {
                         <Editor
@@ -60,7 +72,7 @@ export default function App() {
                     <button className="first-note" onClick={createNewNote}>Create one now</button>
                 </div>
             }
-        </div>
+        </main>
     )
 }
 
